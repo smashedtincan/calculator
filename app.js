@@ -1,16 +1,3 @@
-// const one_btn = document.getElementById("1");
-// const two_btn = document.getElementById("2");
-// const three_btn = document.getElementById("3");
-// const four_btn = document.getElementById("4");
-// const five_btn = document.getElementById("5");
-// const six_btn = document.getElementById("6");
-// const seven_btn = document.getElementById("7");
-// const eight_btn = document.getElementById("8");
-// const nine_btn = document.getElementById("9");
-// const zero_btn = document.getElementById("0");
-// const digits_div = document.getElementsByClassName("digit");
-// const operators_div = document.getElementsByClassName("operator");
-
 const display_p = document.getElementById("display");
 const clear_btn = document.getElementById("clear");
 const equals_btn = document.getElementById("equals");
@@ -19,6 +6,8 @@ const operators = Array.from(document.getElementsByClassName("operator"));
 
 let dispStore = "";
 
+const operatorRegExp = /[*/^+-]/;  
+
 clear_btn.addEventListener("click", () => clear());
 digits_Arr.forEach(button => button.addEventListener("click", () => display(button)));
 equals_btn.addEventListener("click", () => equals()); 
@@ -26,10 +15,11 @@ operators.forEach(button => button.addEventListener("click", () => opera(button)
 
 function opera(button) {
     dispStore += button.innerHTML;
+    display_p.innerHTML = "";
 }
 
 function display(button) {
-    display_p.innerHTML = button.innerHTML;
+    display_p.innerHTML = display_p.innerHTML + button.innerHTML;
     dispStore += button.innerHTML;
 }
 
@@ -40,7 +30,37 @@ function clear() {
 
 function equals() {
     line = Array.from(dispStore);
-    console.log(line);
+
+    // get array of operators indexes
+    const operArr = [];
+    const finalArr = [];
+    line.forEach(function(currVal, index) {
+        if (currVal == "+") {
+            operArr.unshift(index);
+        }
+    });
+    
+    // *SLICE* and join indexes between operators
+    operArr.forEach(function(currVal, index, arrObj) {
+        for (let i = index; i; i++) {
+            let temp = line.slice(currVal + 1);
+            temp.join("");
+            finalArr.push(temp.join(""));
+            temp.pop();
+        }
+    });
+
+    console.log(finalArr);
+
+    // let a = [];
+    // for (let i = 0; i < line.length; i++) {
+    //     // find index of operator
+    //     let temp = (line.indexOf("+"));
+    //     a.pop(temp);
+    // }
+    // console.log(a);
+
+    // join indexes before operator
 }
 
 // math functions
