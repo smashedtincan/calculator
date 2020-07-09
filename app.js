@@ -9,7 +9,10 @@ let dispStore = "";
 const operatorRegExp = /[*/^+-]/;  
 
 clear_btn.addEventListener("click", () => clear());
-digits_Arr.forEach(button => button.addEventListener("click", () => display(button)));
+digits_Arr.forEach(button => button.addEventListener("click", () => { 
+    display(button);
+    dispStore += button.innerHTML;
+}));
 equals_btn.addEventListener("click", () => equals()); 
 operators.forEach(button => button.addEventListener("click", () => opera(button)));
 
@@ -20,7 +23,6 @@ function opera(button) {
 
 function display(button) {
     display_p.innerHTML = display_p.innerHTML + button.innerHTML;
-    dispStore += button.innerHTML;
 }
 
 function clear() {
@@ -29,38 +31,41 @@ function clear() {
 }
 
 function equals() {
-    line = Array.from(dispStore);
+    line = dispStore.split("");
 
-    // get array of operators indexes
     const operArr = [];
-    const finalArr = [];
-    line.forEach(function(currVal, index) {
+    let finalArr = [];
+
+    line.forEach(function(currVal, index) { // get array of operators indexes
         if (currVal == "+") {
             operArr.unshift(index);
         }
     });
-    
-    // *SLICE* and join indexes between operators
-    operArr.forEach(function(currVal, index, arrObj) {
-        for (let i = index; i; i++) {
-            let temp = line.slice(currVal + 1);
-            temp.join("");
-            finalArr.push(temp.join(""));
-            temp.pop();
-        }
+
+    let opIndex = operArr[0]; // where the operator is in the array
+    finalArr // join number at the end of the equation
+        .unshift((line
+        .slice(opIndex+1)
+        .join("")));
+    finalArr // add operator
+        .unshift("+");
+    finalArr // join number before the operator
+        .unshift((line
+        .slice(0, opIndex)
+        .join("")));
+
+    // figure this part out -> trying to turn the numbers into numbers not strings
+    /* 
+    finalArr.forEach( (a) => {
+        a = Number(a);
     });
+    */
 
-    console.log(finalArr);
+    opIndex -= 1; // there is one less index before the operator now
 
-    // let a = [];
-    // for (let i = 0; i < line.length; i++) {
-    //     // find index of operator
-    //     let temp = (line.indexOf("+"));
-    //     a.pop(temp);
-    // }
-    // console.log(a);
+    let ans = finalArr[0] + finalArr[2]; // this is just to outline next steps
 
-    // join indexes before operator
+    console.log(ans);
 }
 
 // math functions
