@@ -4,9 +4,7 @@ const equals_btn = document.getElementById("equals");
 const digits_Arr = Array.from(document.getElementsByClassName("digit"));
 const operators = Array.from(document.getElementsByClassName("operator"));
 
-let dispStore = "";
-
-const operatorRegExp = /[*/^+-]/;  
+let a; let b; let operator; let dispStore = ""; let result;
 
 clear_btn.addEventListener("click", () => clear());
 digits_Arr.forEach(button => button.addEventListener("click", () => { 
@@ -17,8 +15,18 @@ equals_btn.addEventListener("click", () => equals());
 operators.forEach(button => button.addEventListener("click", () => opera(button)));
 
 function opera(button) {
-    dispStore += button.innerHTML;
+    if (!operator) {
+        a = Number(dispStore);
+        operator = button.innerHTML;
+    }
+    else {
+        b = Number(dispStore);
+        equals();
+        a = result;
+        operator = button.innerHTML;        
+    }
     display_p.innerHTML = "";
+    dispStore = "";
 }
 
 function display(button) {
@@ -28,51 +36,32 @@ function display(button) {
 function clear() {
     display_p.innerHTML = "";
     dispStore = "";
+    result = 0;
+    a = 0;
+    b = 0;
+    operator = "";
 }
 
 function equals() {
-    line = dispStore.split("");
-
-    const operArr = [];
-    let finalArr = [];
-
-    line.forEach(function(currVal, index) { // get array of operators indexes
-        if (currVal == "+") {
-            operArr.unshift(index);
-        }
-    });
-
-    let opIndex = operArr[0]; // where the operator is in the array
-    finalArr // join number at the end of the equation
-        .unshift((line
-        .slice(opIndex+1)
-        .join("")));
-    finalArr // add operator
-        .unshift("+");
-    finalArr // join number before the operator
-        .unshift((line
-        .slice(0, opIndex)
-        .join("")));
-
-    // figure this part out -> trying to turn the numbers into numbers not strings
-    /* 
-    finalArr.forEach( (a) => {
-        a = Number(a);
-    });
-    */
-
-    opIndex -= 1; // there is one less index before the operator now
-
-    let ans = finalArr[0] + finalArr[2]; // this is just to outline next steps
-
-    console.log(ans);
+    if (!operator) return;
+    b = Number(dispStore);
+    result = operate(operator, a, b);
+    resultLength = result.toString().length;
+    if (resultLength > 15) {
+        result = result.toPrecision(15);
+    }
+    display_p.innerHTML = result;
+    dispStore = result;
+    operator = "";
 }
 
 // math functions
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
+const divide = (a, b) => { 
+    return (b == 0) ? "undefined" : a / b;
+}
 
 function operate(operator, a, b) {
     return (operator === "+") ? add(a, b)
